@@ -1,0 +1,35 @@
+<?php
+
+$data = $_POST;
+
+
+if (isset($data['email']) && $data['email'] != '' && strtoupper($_SERVER['REQUEST_METHOD']) === 'POST'):
+	include('assets/settings.php');
+	include('assets/database.php');
+	include('assets/app.php');
+
+	$app = new App();
+	$app->setData($data);
+
+	if (!filter_var($data['email'], FILTER_VALIDATE_EMAIL)):
+		$app->setStatus(false);
+		die($app->response());
+	endif;
+
+	if(!$app->insertdata()):
+		$app->setStatus(false);
+		die($app->response());
+	endif;
+
+	$app->setStatus(true);
+
+	mail('info@duxelo.com','Demo aanvraag van: '.$data['email'], $data['email'].' heeft een demo aangevraag ingediend');
+
+
+	die($app->response());
+
+endif;
+die('That is not a valid post request.');
+
+
+
